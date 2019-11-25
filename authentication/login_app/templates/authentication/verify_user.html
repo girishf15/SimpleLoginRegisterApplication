@@ -1,0 +1,14 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+        <form method='POST' action="{% url 'dashboardView' %}">
+
+            {% csrf_token %}
+
+            Enter your otp : <input type='text' name='otp'> <br><br>
+
+            <button>Submit</submit>
+        </form>
+
+{% endblock content %}

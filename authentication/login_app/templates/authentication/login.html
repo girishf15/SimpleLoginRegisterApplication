@@ -1,0 +1,23 @@
+{% extends "index.html" %}
+
+
+    {% block content %}
+
+    <center>
+
+        <h3>User Login<h3>
+
+        <form method='POST' action="{% url 'verifyView' %}">
+
+            {% csrf_token %}
+
+            username : <input type='text' name='username'> <br><br>
+            password : <input type='password' name='password'> <br><br>
+            <button>Submit</submit>
+
+        </form>
+    </center>
+
+        
+    
+{% endblock content %}
