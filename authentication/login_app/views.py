@@ -16,18 +16,22 @@ def loginView(request):
     return render(request, 'authentication/login.html')
 
 
+def logoutView(request):
+    request.session.flush()
+    return redirect('/')
+
+
 def verifyView(request):
 
-    username = request.POST['username']
-    password = request.POST['password']
-
-    print(username, password)
+    username = request.POST.get('username', None)
+    password = request.POST.get('password', None)
 
     emp = Employee.objects.filter(email_id=username, password=password)
 
     if emp:
 
-        # generate random nubmer of 6 digits
+        request.session['username'] = username
+
         #otp = random.randint(100000, 999999)
         otp = settings.OTP
 
@@ -37,6 +41,7 @@ def verifyView(request):
             Employee Management System. OTP : {}'.format(otp)
 
         recepient = emp[0].email_id
+        print("OTP:", otp)
 
         # send_mail(subject, message, settings.EMAIL_HOST_USER,
         #          [recepient], fail_silently=False)
@@ -45,17 +50,21 @@ def verifyView(request):
         context['otp'] = otp
         return render(request, 'authentication/verify_user.html', context)
     else:
-        return redirect('login/')
+        return redirect('/login')
 
 
 def dashboardView(request):
 
-    user_otp = request.POST['otp']
+    username = request.session.get('username', None)
 
-    if int(user_otp) == settings.OTP:
-        return render(request, 'dashboard.html')
-    else:
-        return redirect('/login')
+    if username:
+
+        user_otp = request.POST['otp']
+
+        if int(user_otp) == settings.OTP:
+            return render(request, 'dashboard.html', {'username': username})
+
+    return redirect('/login')
 
 
 def registerView(request):
@@ -64,8 +73,6 @@ def registerView(request):
 
 
 def userregistrationView(request):
-
-    print('bbc')
 
     if request.method == 'POST':
         email_id = request.POST['email']
